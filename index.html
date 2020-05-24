@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To Do List</title>
+  <style>
+    .hidden {
+      display: none;
+    }
+
+    .container {
+      width: 400px;
+      margin: 100px auto;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <p id="show"></p>
+    <input type="text" id="text" class="hidden">
+    <p id="question">クリックしたら問題がスタート</p>
+    <p id="judge"></p>
+    <img src="" alt="" id="img">
+    <div id="oya">
+      <button id="btn">スタート</button>
+      <button id="next" class="hidden">次に進む</button>
+      <button id="finish" class="hidden">終わり！</button>
+
+    </div>
+  </div>
+
+  <script>
+    'use strict';
+    {
+      const show = document.getElementById('show');
+      const text = document.getElementById('text');
+      const question = document.getElementById('question');
+      const judge = document.getElementById('judge');
+      const img = document.getElementById('img');
+      const btn = document.getElementById('btn')
+      const next = document.getElementById('next')
+      const finish = document.getElementById('finish')
+      const oya = document.getElementById('oya')
+      let count = 0;
+      let startTime;
+      let timeOutId;
+
+      let a = Math.floor(Math.random() * 11);
+      let b = Math.floor(Math.random() * 11);
+      let c = a + b;
+
+      function setQuestion() {
+        a = Math.floor(Math.random() * 11);
+        b = Math.floor(Math.random() * 11);
+        c = a + b;
+        show.textContent = `${a} + ${b} = ?`;
+      }
+
+      function countUp() {
+        const d = new Date(Date.now() - startTime);
+        const s = d.getSeconds();
+        finish.addEventListener('click', () => {
+          clearTimeout(timeOutId);
+          judge.textContent = `${s}秒で解き終わりました`
+        });
+        timeOutId = setTimeout(() => {
+          countUp();
+        }, 10)
+      }
+
+      function reset() {
+        text.value = ''; //inputの値をリセット
+        console.log(count);
+        judge.textContent = '';
+        next.classList.add('hidden');
+        img.src=''
+        btn.textContent='やりなおす';
+      }
+
+      function gameStart() {
+        text.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            if (text.value === `${c}`) {
+              if (count < 3) { 
+                judge.textContent = '正解！' 
+                
+              img.src = ''
+              count++;
+              next.classList.remove('hidden');
+              next.addEventListener('click', () => {
+                setQuestion();
+                reset();
+              });
+                };
+              if (count === 3) {
+                img.src = 'img/atari.png';
+                next.classList.add('hidden');
+                finish.classList.remove('hidden');
+                finish.addEventListener('click', () => {
+
+                });
+              };
+            };
+
+            if (isNaN(text.value)) {
+              //isNaNが数値じゃないときは以下の処理を実行
+              alert('数値を入力してください');
+              judge.textContent = '不正解！'
+              btn.classList.remove('hidden');
+              btn.addEventListener('click', () => {
+                reset();
+                count=0;
+
+              });
+            };
+            if (text.value !== `${c}`) {
+              img.src = 'img/mukiryoku_obasan.png';
+              count = 0;
+              judge.textContent = '不正解！'
+              btn.classList.remove('hidden');
+              btn.addEventListener('click', () => {
+                reset();
+                count=0;
+              });
+            };
+
+          }
+        });
+      }
+
+      btn.addEventListener('click', () => {
+        question.textContent = '３問連続で正解してね'
+        text.classList.remove('hidden');
+        btn.classList.add('hidden');
+        show.textContent = `${a} + ${b} = ?`;
+        startTime = Date.now();
+        countUp();
+        gameStart();
+      });
+
+
+      
+      //作り直す
+      //画面をクリックすると問題が表示されタイマー起動
+      //ランダムに問題が出力され回答すると次に進む
+      //間違えると最初からになり再挑戦のボタンが登場
+      //３問連続正解でタイマーが止まり、かかった時間が表示
+      //関数にまとめる
+
+
+    }
+  </script>
+
+
+</body>
+
+</html>
